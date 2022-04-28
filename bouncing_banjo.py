@@ -6,60 +6,65 @@
 import pygame
 import random
 
+
 class GameConstants():
+
     SCREEN_WIDTH = 1200
     SCREEN_HEIGHT = 800
     BACKGROUND_COLOR = (255, 255, 255)
     MIN_SPEED = 1
     MAX_SPEED = 5
 
+
 class Banjo(pygame.sprite.Sprite):
+
     def __init__(self,
-                 x_speed=1,
-                 y_speed=1,
-                 x_direction=1,
-                 y_direction=1):
+                 x_center = 200,
+                 y_center = 200,
+                 x_speed = 1,
+                 y_speed = 1,
+                 x_direction = 1,
+                 y_direction = 1):
         super(Banjo, self).__init__()
         self.image = pygame.image.load('images/banjo.png').convert_alpha()
-        #self.image = pygame.transform.rotozoom(self.image, 0, .25)
         self.image = pygame.transform.smoothscale(self.image, (200, 200))
         self.rect = self.image.get_rect()
-        self.rect.center = ((GameConstants.SCREEN_WIDTH / 2, GameConstants.SCREEN_HEIGHT / 2))
-
+        self.rect.center = (x_center, y_center)
         self.x_speed = x_speed
         self.y_speed = y_speed
-
         self.x_direction = x_direction
         self.y_direction = y_direction
 
     def update(self):
-
-        # Detect hitting top or bottom
+        # Detect edges of window, reverse direction when hit
         if self.rect.top <= 0:
             self.y_direction = 1
         elif self.rect.bottom >= GameConstants.SCREEN_HEIGHT:
             self.y_direction = -1
-        # Detect hitting left or right
         if self.rect.left <= 0:
             self.x_direction = 1
         elif self.rect.right >= GameConstants.SCREEN_WIDTH:
             self.x_direction = -1
-
-        # Move it
+        # Move it move it
         self.rect.x += self.x_direction * self.x_speed
         self.rect.y += self.y_direction * self.y_speed
 
-def generate_random_banjo():
 
-    # set speed
+def generate_random_banjo():
+    """
+    Generates an instance of the Banjo image/sprite at the center of the window
+    moving at a random speed in a random direction
+    """
+    x_center = GameConstants.SCREEN_WIDTH / 2
+    y_center = GameConstants.SCREEN_HEIGHT / 2
+    # Set speed and direction
     x_speed = random.choice(range(GameConstants.MIN_SPEED, GameConstants.MAX_SPEED + 1, 1))
     y_speed = random.choice(range(GameConstants.MIN_SPEED, GameConstants.MAX_SPEED + 1, 1))
-
-    # set direction, either 1 (down or right) or -1 (up or left)
     x_direction = random.choice((-1, 1))
     y_direction = random.choice((-1, 1))
-
     return Banjo(
+        x_center = x_center,
+        y_center = y_center,
         x_direction = x_direction,
         y_direction = y_direction,
         x_speed = x_speed,
@@ -90,15 +95,16 @@ def main():
             if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
                 banjos.add(generate_random_banjo())
 
-        # Update
+        # Update sprites
         banjos.update()
 
         # Render
         screen.fill(GameConstants.BACKGROUND_COLOR)
         banjos.draw(screen)
-        pygame.display.update() # after drawing everything
+        pygame.display.update() # only after drawing everything else
 
         clock.tick(60)
+    # End of main game loop
 
     pygame.quit()
     exit()
