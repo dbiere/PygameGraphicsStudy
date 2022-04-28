@@ -21,7 +21,8 @@ class Banjo(pygame.sprite.Sprite):
                  y_direction=1):
         super(Banjo, self).__init__()
         self.image = pygame.image.load('images/banjo.png').convert_alpha()
-        self.image = pygame.transform.rotozoom(self.image, 0, .25)
+        #self.image = pygame.transform.rotozoom(self.image, 0, .25)
+        self.image = pygame.transform.smoothscale(self.image, (200, 200))
         self.rect = self.image.get_rect()
         self.rect.center = ((GameConstants.SCREEN_WIDTH / 2, GameConstants.SCREEN_HEIGHT / 2))
 
@@ -77,7 +78,7 @@ def main():
 
     # Sprites
     banjos = pygame.sprite.Group()
-    banjos.add(Banjo())
+    banjos.add(generate_random_banjo())
 
     # Game loop
     while game_running:
