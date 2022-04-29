@@ -16,6 +16,15 @@ class GameConstants():
     MAX_SPEED = 5
 
 
+class GameState():
+    """
+    Support ability to pause the game/demo
+    """
+
+    def __init__(self):
+        self.running = True
+
+
 class Banjo(pygame.sprite.Sprite):
 
     def __init__(self,
@@ -75,6 +84,8 @@ def main():
 
     pygame.init()
 
+    state = GameState()
+
     screen = pygame.display.set_mode((GameConstants.SCREEN_WIDTH, GameConstants.SCREEN_HEIGHT))
     pygame.display.set_caption('Graphics Demo - Bouncing Banjo')
     clock = pygame.time.Clock()
@@ -92,16 +103,21 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game_running = False
-            if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
+            if event.type == pygame.KEYUP and event.key == pygame.K_SPACE and state.running:
                 banjos.add(generate_random_banjo())
+            if event.type == pygame.KEYUP and event.key == pygame.K_p:
+                if state.running: state.running = False
+                else: state.running = True
 
         # Update sprites
-        banjos.update()
+        if state.running:
+            banjos.update()
 
         # Render
-        screen.fill(GameConstants.BACKGROUND_COLOR)
-        banjos.draw(screen)
-        pygame.display.update() # only after drawing everything else
+        if state.running:
+            screen.fill(GameConstants.BACKGROUND_COLOR)
+            banjos.draw(screen)
+            pygame.display.update() # only after drawing everything else
 
         clock.tick(60)
     # End of main game loop
