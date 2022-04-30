@@ -22,7 +22,7 @@ class GameState():
     """
 
     def __init__(self):
-        self.running = True
+        self.active = True
 
 
 class Banjo(pygame.sprite.Sprite):
@@ -90,34 +90,42 @@ def main():
     pygame.display.set_caption('Graphics Demo - Bouncing Banjo')
     clock = pygame.time.Clock()
 
-    game_running = True
+    game_active = True
 
     # Sprites
     banjos = pygame.sprite.Group()
     banjos.add(generate_random_banjo())
 
+    # Pause screen overlay
+    pause_surface = pygame.Surface((GameConstants.SCREEN_WIDTH, GameConstants.SCREEN_HEIGHT))
+    pause_surface.set_alpha(160) # 0 = transparent, 255 = opaque
+    pause_surface.fill((0, 0, 0))
+
     # Game loop
-    while game_running:
+    while game_active:
 
         # Event loop
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                game_running = False
-            if event.type == pygame.KEYUP and event.key == pygame.K_SPACE and state.running:
+                game_active = False
+            if event.type == pygame.KEYUP and event.key == pygame.K_SPACE and state.active:
                 banjos.add(generate_random_banjo())
             if event.type == pygame.KEYUP and event.key == pygame.K_p:
-                if state.running: state.running = False
-                else: state.running = True
+                if state.active: state.active = False
+                else: state.active = True
 
         # Update sprites
-        if state.running:
+        if state.active:
             banjos.update()
 
         # Render
-        if state.running:
-            screen.fill(GameConstants.BACKGROUND_COLOR)
-            banjos.draw(screen)
-            pygame.display.update() # only after drawing everything else
+        screen.fill(GameConstants.BACKGROUND_COLOR)
+        banjos.draw(screen)
+        if not state.active:
+            # darken the screen
+            screen.blit(pause_surface, (0, 0))
+
+        pygame.display.update() # only after drawing everything else
 
         clock.tick(60)
     # End of main game loop
