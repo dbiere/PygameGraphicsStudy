@@ -90,7 +90,7 @@ def main():
     pygame.display.set_caption('Graphics Demo - Bouncing Banjo')
     clock = pygame.time.Clock()
 
-    game_active = True
+    game_running = True
 
     # Sprites
     banjos = pygame.sprite.Group()
@@ -102,12 +102,12 @@ def main():
     pause_surface.fill((0, 0, 0))
 
     # Game loop
-    while game_active:
+    while game_running:
 
         # Event loop
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                game_active = False
+                game_running = False
             if event.type == pygame.KEYUP and event.key == pygame.K_SPACE and state.active:
                 banjos.add(generate_random_banjo())
             if event.type == pygame.KEYUP and event.key == pygame.K_p:
@@ -128,7 +128,7 @@ def main():
         pygame.display.update() # only after drawing everything else
 
         clock.tick(60)
-    # End of main game loop
+    # End of game loop
 
     pygame.quit()
     exit()
